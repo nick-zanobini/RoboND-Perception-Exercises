@@ -50,7 +50,7 @@ def pcl_callback(pcl_msg):
     seg.set_method_type(pcl.SAC_RANSAC)
 
     # Max distance for a point to be considered fitting the model
-    max_distance = 0.01
+    max_distance = 0.001
     seg.set_distance_threshold(max_distance)
 
     # TODO: Extract inliers and outliers
@@ -62,7 +62,7 @@ def pcl_callback(pcl_msg):
     extracted_outliers = cloud_filtered.extract(inliers, negative=False)
 
     # TODO: Euclidean Clustering
-    white_cloud = XYZRGB_to_XYZ(extracted_inliers)
+    white_cloud = XYZRGB_to_XYZ(cloud)
     tree = white_cloud.make_kdtree()
 
     # TODO: Create Cluster-Mask Point Cloud to visualize each cluster separately
@@ -73,9 +73,10 @@ def pcl_callback(pcl_msg):
     # as well as minimum and maximum cluster size (in points)
     # NOTE: These are poor choices of clustering parameters
     # Your task is to experiment and find values that work for segmenting objects.
-    ec.set_ClusterTolerance(0.001)
-    ec.set_MinClusterSize(10)
-    ec.set_MaxClusterSize(250)
+    # 0.01, 350, 50000 - See 3 middle objects
+    ec.set_ClusterTolerance(0.011)
+    ec.set_MinClusterSize(900)
+    ec.set_MaxClusterSize(7000)
     # Search the k-d tree for clusters
     ec.set_SearchMethod(tree)
     # Extract indices for each of the discovered clusters
