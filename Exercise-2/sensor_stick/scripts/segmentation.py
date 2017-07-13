@@ -35,7 +35,7 @@ def pcl_callback(pcl_msg):
     # Assign axis and range to the passthrough filter object.
     filter_axis = 'z'
     passthrough.set_filter_field_name(filter_axis)
-    axis_min = 0.6
+    axis_min = 0.7706
     axis_max = 1.1
     passthrough.set_filter_limits(axis_min, axis_max)
     # Finally use the filter function to obtain the resultant point cloud.
@@ -50,19 +50,19 @@ def pcl_callback(pcl_msg):
     seg.set_method_type(pcl.SAC_RANSAC)
 
     # Max distance for a point to be considered fitting the model
-    max_distance = 0.001
+    max_distance = 0.01
     seg.set_distance_threshold(max_distance)
 
     # TODO: Extract inliers and outliers
     # Call the segment function to obtain set of inlier indices and model coefficients
     inliers, coefficients = seg.segment()
     # Extract inliers
-    extracted_inliers = cloud_filtered.extract(inliers, negative=True)
+    table_cloud = cloud_filtered.extract(inliers, negative=False)
     # Extract outliers
-    extracted_outliers = cloud_filtered.extract(inliers, negative=False)
+    objects_cloud = cloud_filtered.extract(inliers, negative=True)
 
     # TODO: Euclidean Clustering
-    white_cloud = XYZRGB_to_XYZ(cloud)
+    white_cloud = XYZRGB_to_XYZ(objects_cloud)
     tree = white_cloud.make_kdtree()
 
     # TODO: Create Cluster-Mask Point Cloud to visualize each cluster separately
@@ -74,9 +74,9 @@ def pcl_callback(pcl_msg):
     # NOTE: These are poor choices of clustering parameters
     # Your task is to experiment and find values that work for segmenting objects.
     # 0.01, 350, 50000 - See 3 middle objects
-    ec.set_ClusterTolerance(0.011)
-    ec.set_MinClusterSize(900)
-    ec.set_MaxClusterSize(7000)
+    ec.set_ClusterTolerance(0.014)
+    ec.set_MinClusterSize(20)
+    ec.set_MaxClusterSize(2000)
     # Search the k-d tree for clusters
     ec.set_SearchMethod(tree)
     # Extract indices for each of the discovered clusters
@@ -99,8 +99,8 @@ def pcl_callback(pcl_msg):
     cluster_cloud.from_list(color_cluster_point_list)
 
     # TODO: Convert PCL data to ROS messages
-    ros_objects_cloud = pcl_to_ros(extracted_inliers)
-    ros_table_cloud = pcl_to_ros(extracted_outliers)
+    ros_objects_cloud = pcl_to_ros(objects_cloud)
+    ros_table_cloud = pcl_to_ros(table_cloud)
     ros_cluster_cloud = pcl_to_ros(cluster_cloud)
 
     # TODO: Publish ROS messages
