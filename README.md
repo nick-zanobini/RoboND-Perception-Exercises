@@ -1,5 +1,26 @@
+[//]: # (Image References)
+
+[clustering]: ./misc/clustering.jpg
+[objects]: ./misc/objects.jpg
+[table]: ./misc/table.jpg
+
+
 # RoboND-Perception-Exercises
 These exercises are part of the perception lessons in the [Udacity Robotics Nanodegree Program](https://www.udacity.com/robotics) In these exercises, you will perform object segmentation on 3D point cloud data using `python-pcl` to leverage the power of the [Point Cloud Library](http://pointclouds.org/).  In Exercise 1, you'll get some practice performing filtering and RANSAC plane segmentation, and in Exercise-2 you'll write a ROS node to perform those functions as well as Euclidean Clustering for object segmentation!
+
+Objects segmented using clustering
+
+![alt text][clustering]
+
+Objects segmented using RANSAC Plane Segmentation
+
+![alt text][objects]
+
+Table segmented using RANSAC Plane Segmentation
+
+![alt text][table]
+
+
 
 ## Installation
 ### Install cython
